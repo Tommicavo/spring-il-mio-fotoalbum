@@ -1,0 +1,26 @@
+#app{
+    max-width: 100vw;
+    text-align: left;
+    padding: 0;
+    margin: 0;
+}
+
+body.myApp{
+    display: block;
+    background-color: rgba(255, 255, 255, 0.15);
+    color: white;
+}
+
+.myApp{
+    & main{
+        height: 100vh;
+    }
+    & ul{
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+    }
+    & a{
+        text-decoration: none;
+    }
+}
