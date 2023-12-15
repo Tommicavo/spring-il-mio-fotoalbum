@@ -1,10 +1,13 @@
 <script>
+  import AppHeader from "@/components/header/AppHeader.vue";
   export default {
     name: "App",
     data() {
       return {};
     },
-    components: {},
+    components: {
+      AppHeader,
+    },
     props: {},
     computed: {},
     methods: {},
@@ -12,11 +15,12 @@
 </script>
 
 <template>
-  <main>
-    <div class="container h-100">
+  <div class="container h-100">
+    <AppHeader />
+    <main>
       <router-view></router-view>
-    </div>
-  </main>
+    </main>
+  </div>
 </template>
 
 <style lang="scss">
