@@ -14,6 +14,9 @@ import java.util.Arrays;
 import java.util.List;
 import org.hibernate.validator.constraints.Length;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 @Entity
 public class Photo {
 
@@ -94,10 +97,12 @@ public class Photo {
         this.visible = visible;
     }
 
+    @JsonProperty("categories")
     public List<Category> getCategories() {
         return categories;
     }
 
+    @JsonIgnore
     public void setCategories(List<Category> categories) {
         this.categories = categories;
     }
@@ -109,7 +114,8 @@ public class Photo {
     // TO STRING
     @Override
     public String toString() {
-        return "[" + getId() + "] - " + getTitle();
+        return "[" + getId() + "] - " + getTitle() + '\n' +
+                getCategories();
     }
 
     // METHODS

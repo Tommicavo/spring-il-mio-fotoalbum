@@ -34,7 +34,12 @@
 </script>
 
 <template>
-  <h1 class="myTitle">Foto Album</h1>
+  <header>
+    <h1 class="myTitle">Foto Album</h1>
+    <router-link class="btn btn-success" :to="{ name: 'CreatePage' }"
+      >Add</router-link
+    >
+  </header>
   <div class="homePage">
     <div class="row">
       <div class="col" v-for="photo in photos" :key="photo.id">
