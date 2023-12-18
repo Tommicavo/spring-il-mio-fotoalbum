@@ -2,6 +2,7 @@ package org.java.spring.springilmiofotoalbum.db.dto;
 
 import java.util.List;
 import org.hibernate.validator.constraints.Length;
+import org.java.spring.springilmiofotoalbum.auth.db.pojo.User;
 
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotBlank;
@@ -22,6 +23,8 @@ public class Photo_DTO {
     private Boolean visible;
 
     private List<Integer> categoryIds;
+
+    private int user_id;
 
     public int getId() {
         return id;
@@ -69,6 +72,14 @@ public class Photo_DTO {
 
     public void setCategoryIds(List<Integer> categoryIds) {
         this.categoryIds = categoryIds;
+    }
+
+    public int getUser_id() {
+        return user_id;
+    }
+
+    public void setUser_id(int user_id) {
+        this.user_id = user_id;
     }
 
     @AssertTrue(message = "Custom validation message")

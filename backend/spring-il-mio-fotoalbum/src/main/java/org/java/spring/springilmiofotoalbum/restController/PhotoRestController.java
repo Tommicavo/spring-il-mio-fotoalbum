@@ -3,6 +3,9 @@ package org.java.spring.springilmiofotoalbum.restController;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import org.java.spring.springilmiofotoalbum.auth.db.pojo.User;
+import org.java.spring.springilmiofotoalbum.auth.db.serv.UserService;
 import org.java.spring.springilmiofotoalbum.db.dto.Photo_DTO;
 import org.java.spring.springilmiofotoalbum.db.pojo.Category;
 import org.java.spring.springilmiofotoalbum.db.pojo.Photo;
@@ -35,6 +38,9 @@ public class PhotoRestController {
 
     @Autowired
     private CategoryService categoryService;
+
+    @Autowired
+    private UserService userService;
 
     @GetMapping
     public ResponseEntity<List<Photo>> index() {
@@ -69,6 +75,7 @@ public class PhotoRestController {
         String url = photo_DTO.getUrl();
         Boolean visible = photo_DTO.isVisible();
         List<Integer> categoryIds = photo_DTO.getCategoryIds();
+        int user_id = photo_DTO.getUser_id();
 
         Photo photo = new Photo();
         photo.setTitle(title);
@@ -83,6 +90,9 @@ public class PhotoRestController {
                 categories.add(category);
         }
 
+        User user = userService.findById(user_id);
+        photo.setUser(user);
+
         photo.setCategories(categories);
         photoService.save(photo);
 
@@ -94,8 +104,6 @@ public class PhotoRestController {
             @Valid @RequestBody Photo_DTO photo_DTO,
             @PathVariable int id,
             BindingResult bindingResult) {
-
-        System.out.println("Binding Result has errors: " + bindingResult.hasErrors());
 
         if (bindingResult.hasErrors()) {
             List<FieldError> fieldErrors = bindingResult.getFieldErrors();

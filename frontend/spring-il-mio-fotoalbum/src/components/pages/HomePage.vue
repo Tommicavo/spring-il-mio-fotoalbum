@@ -1,5 +1,6 @@
 <script>
   import axios from "axios";
+  import { store } from "@/assets/data/store.js";
 
   import PhotoCard from "@/components/photo/PhotoCard.vue";
 
@@ -7,6 +8,7 @@
     name: "HomePage",
     data() {
       return {
+        store,
         searchedWord: "",
         photos: [],
         filteredPhotos: [],
@@ -59,11 +61,12 @@
             placeholder="Search a Photo..."
             v-model.trim="searchedWord"
           />
-          <button class="btn btn-danger" type="submit">Find</button>
+          <button class="btn btn-primary" type="submit">Find</button>
         </form>
       </div>
     </div>
     <router-link
+      v-if="store.isLoggedIn"
       class="btn btn-success"
       :to="{
         name: 'FormPage',

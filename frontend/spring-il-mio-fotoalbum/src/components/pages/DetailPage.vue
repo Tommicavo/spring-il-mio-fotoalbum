@@ -7,12 +7,7 @@
     name: "DetailPage",
     data() {
       return {
-        photo: {
-          title: "",
-          description: "",
-          visible: false,
-          categories: [],
-        },
+        photo: {},
       };
     },
     components: {
@@ -25,9 +20,8 @@
         const endpoint = `http://127.0.0.1:8080/photos/api/${this.$route.params.id}`;
         try {
           const res = await axios.get(endpoint);
-          const photo = res.data;
-          console.log(photo);
-          Object.assign(this.photo, photo);
+          this.photo = res.data;
+          // console.log("PHOTO:\n", this.photo);
         } catch (err) {
           console.error("Catch Error: ", err);
         }
@@ -36,7 +30,7 @@
         const endpoint = `http://127.0.0.1:8080/photos/api/${id}`;
         try {
           const res = await axios.delete(endpoint);
-          console.log(res.data);
+          // console.log(res.data);
           this.$router.push({ name: "HomePage" });
         } catch (err) {
           console.error("Catch Error: ", err);

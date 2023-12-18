@@ -1,5 +1,6 @@
 <script>
   import axios from "axios";
+  import { store } from "../../assets/data/store";
 
   export default {
     name: "FormPage",
@@ -78,6 +79,7 @@
             url: this.photo.url,
             visible: this.photo.visible,
             categoryIds: selectedCategoriesIds,
+            user_id: store.user.id,
           };
         }
 

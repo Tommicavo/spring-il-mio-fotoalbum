@@ -35,6 +35,10 @@
           <div>
             {{ getCategories(photo) }}
           </div>
+          <div class="user">
+            <span class="fw-bold">Author: </span>
+            <span>username</span>
+          </div>
         </div>
       </div>
     </router-link>

@@ -1,13 +1,38 @@
 <script>
+  import { store } from "../../assets/data/store";
+
   export default {
     name: "AppHeader",
     data() {
-      return {};
+      return {
+        store,
+      };
     },
     components: {},
     props: {},
-    computed: {},
-    methods: {},
+    computed: {
+      logBtn() {
+        if (store.isLoggedIn) {
+          return "Logout";
+        }
+        return "Login";
+      },
+      isLogged() {
+        return store.isLoggedIn;
+      },
+      userLog() {
+        if (this.isLogged) {
+          return store.user.username;
+        }
+        return "Guest";
+      },
+    },
+    methods: {
+      logout() {
+        store.isLoggedIn = false;
+        store.user = {};
+      },
+    },
   };
 </script>
 
@@ -26,8 +51,12 @@
       </div>
       <div class="navbarRight">
         <ul class="d-flex gap-3">
-          <li>
-            <router-link :to="{ name: 'HomePage' }">Login</router-link>
+          <li>{{ userLog }}</li>
+          <li v-if="!isLogged">
+            <router-link :to="{ name: 'LoginPage' }">Login</router-link>
+          </li>
+          <li v-if="isLogged">
+            <div class="logoutBtn" @click="logout">Logout</div>
           </li>
         </ul>
       </div>
@@ -39,5 +68,9 @@
   @use "@/assets/sass/_vars.scss" as *;
   .myNavbar {
     height: $headerHeight;
+  }
+
+  .logoutBtn {
+    cursor: pointer;
   }
 </style>

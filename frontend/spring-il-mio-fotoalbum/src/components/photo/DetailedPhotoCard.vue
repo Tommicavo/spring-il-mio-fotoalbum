@@ -1,25 +1,50 @@
 <script>
+  import { store } from "@/assets/data/store.js";
+
   export default {
     name: "DetailedPhotoCard",
     data() {
-      return {};
+      return {
+        store,
+      };
     },
     components: {},
     props: {
       photo: Object,
     },
-    computed: {},
+    computed: {
+      isMyPhoto() {
+        if (this.photo && this.photo.user) {
+          return store.user.username == this.photo.user.username;
+        }
+      },
+    },
     methods: {
       getCategories(photo) {
-        let output = "";
-        const categories = photo.categories;
-        categories.forEach((category) => {
-          output += "#" + category.label + " ";
-        });
-        return output;
+        if (this.photo && this.photo.categories) {
+          let output = "";
+          const categories = photo.categories;
+          categories.forEach((category) => {
+            output += "#" + category.label + " ";
+          });
+          return output;
+        }
+      },
+      getAuthor(photo) {
+        if (this.photo && this.photo.user) {
+          return photo.user.username;
+        }
       },
     },
     emits: ["delete"],
+    watch: {
+      photo: {
+        immediate: false,
+        handler(newVal) {
+          console.log("Photo: ", newVal);
+        },
+      },
+    },
   };
 </script>
 
@@ -42,7 +67,7 @@
       <div class="imageContainer">
         <img class="image" :src="photo.url" :alt="photo.title" />
       </div>
-      <div class="userControl d-flex gap-3 p-1">
+      <div v-if="isMyPhoto" class="userControl d-flex gap-3 p-1">
         <router-link
           class="btn btn-warning"
           :to="{
@@ -60,7 +85,14 @@
           Delete
         </button>
       </div>
-      <div>{{ getCategories(photo) }}</div>
+      <div class="categories">
+        <span class="fw-bold">About: </span>
+        <span>{{ getCategories(photo) }}</span>
+      </div>
+      <div class="author">
+        <span class="fw-bold">Author: </span>
+        <span>{{ getAuthor(photo) }}</span>
+      </div>
     </section>
   </div>
 </template>

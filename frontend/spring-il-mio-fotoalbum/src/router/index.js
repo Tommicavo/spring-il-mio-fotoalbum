@@ -5,12 +5,14 @@ import NotFoundPage from '@/components/pages/NotFoundPage.vue';
 
 import DetailPage from '@/components/pages/DetailPage.vue';
 import FormPage from '@/components/pages/FormPage.vue';
+import LoginPage from '@/components/pages/LoginPage.vue';
 
 const router = createRouter({
     history: createWebHistory(),
     linkExactActiveClass: 'active',
     routes: [
         {path: '/', name: 'HomePage', component: HomePage},
+        {path: '/login', name: 'LoginPage', component: LoginPage},
         {path: '/photos/:id', name: 'DetailPage', component: DetailPage},
         {path: '/photos/:mode/:id', name: 'FormPage', component: FormPage},
 
