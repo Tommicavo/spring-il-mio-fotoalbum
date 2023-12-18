@@ -4,7 +4,7 @@ import HomePage from '@/components/pages/HomePage.vue';
 import NotFoundPage from '@/components/pages/NotFoundPage.vue';
 
 import DetailPage from '@/components/pages/DetailPage.vue';
-import CreatePage from '@/components/pages/CreatePage.vue';
+import FormPage from '@/components/pages/FormPage.vue';
 
 const router = createRouter({
     history: createWebHistory(),
@@ -12,7 +12,7 @@ const router = createRouter({
     routes: [
         {path: '/', name: 'HomePage', component: HomePage},
         {path: '/photos/:id', name: 'DetailPage', component: DetailPage},
-        {path: '/photos/create', name: 'CreatePage', component: CreatePage},
+        {path: '/photos/:mode/:id', name: 'FormPage', component: FormPage},
 
         {path: '/notFoundPage', name: 'NotFoundPage', component: NotFoundPage},
         {path: '/:pathMatch(.*)*', redirect: '/NotFoundPage'},

@@ -43,7 +43,14 @@
         <img class="image" :src="photo.url" :alt="photo.title" />
       </div>
       <div class="userControl d-flex gap-3 p-1">
-        <a class="btn btn-warning" href="#">Edit</a>
+        <router-link
+          class="btn btn-warning"
+          :to="{
+            name: 'FormPage',
+            params: { mode: 'edit', id: photo.id },
+          }"
+          >Edit</router-link
+        >
         <a class="btn btn-info" href="#">Publish</a>
         <button
           class="btn btn-danger"

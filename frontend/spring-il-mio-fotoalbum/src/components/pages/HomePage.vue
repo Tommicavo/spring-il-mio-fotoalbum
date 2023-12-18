@@ -34,9 +34,14 @@
 </script>
 
 <template>
-  <header>
+  <header class="d-flex justify-content-between align-items-center">
     <h1 class="myTitle">Foto Album</h1>
-    <router-link class="btn btn-success" :to="{ name: 'CreatePage' }"
+    <router-link
+      class="btn btn-success"
+      :to="{
+        name: 'FormPage',
+        params: { mode: 'create', id: 'new_photo' },
+      }"
       >Add</router-link
     >
   </header>

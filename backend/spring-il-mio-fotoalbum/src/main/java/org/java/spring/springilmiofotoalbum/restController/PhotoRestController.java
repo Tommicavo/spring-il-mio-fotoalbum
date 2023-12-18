@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -76,6 +77,47 @@ public class PhotoRestController {
         List<Category> categories = new ArrayList<>();
         for (int id : categoryIds) {
             Category category = categoryService.findById(id);
+            if (category != null)
+                categories.add(category);
+        }
+
+        photo.setCategories(categories);
+        photoService.save(photo);
+
+        return new ResponseEntity<>(photo, HttpStatus.OK);
+    }
+
+    @PutMapping("{id}")
+    public ResponseEntity<?> update(
+            @Valid @RequestBody Photo_DTO photo_DTO,
+            @PathVariable int id,
+            BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            List<String> errors = bindingResult.getAllErrors().stream()
+                    .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                    .collect(Collectors.toList());
+
+            return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+        }
+
+        String title = photo_DTO.getTitle();
+        String description = photo_DTO.getDescription();
+        String url = photo_DTO.getUrl();
+        Boolean visible = photo_DTO.isVisible();
+        List<Integer> categoryIds = photo_DTO.getCategoryIds();
+
+        Photo photo = photoService.findById(id);
+        photo.setTitle(title);
+        photo.setDescription(description);
+        photo.setUrl(url);
+        photo.setVisible(visible);
+
+        photo.getCategories().clear();
+
+        List<Category> categories = new ArrayList<>();
+        for (int category_id : categoryIds) {
+            Category category = categoryService.findById(category_id);
             if (category != null)
                 categories.add(category);
         }
