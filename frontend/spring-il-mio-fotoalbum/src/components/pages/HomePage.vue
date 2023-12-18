@@ -7,7 +7,9 @@
     name: "HomePage",
     data() {
       return {
+        searchedWord: "",
         photos: [],
+        filteredPhotos: [],
       };
     },
     components: {
@@ -20,11 +22,23 @@
         const endpoint = "http://127.0.0.1:8080/photos/api";
         try {
           const res = await axios.get(endpoint);
-          // console.log("Photos: ", res.data);
+          console.log("Photos: ", res.data);
           this.photos = res.data;
+          this.filteredPhotos = res.data;
         } catch (err) {
           console.error("Catch Error: ", err);
         }
+      },
+      fetchFilteredPhotos() {
+        if (this.searchedWord.length == 0) {
+          this.filteredPhotos = [...this.photos];
+          return;
+        }
+        const filteredPhotos = this.photos.filter((photo) =>
+          photo.title.includes(this.searchedWord)
+        );
+        console.log(filteredPhotos);
+        this.filteredPhotos = filteredPhotos;
       },
     },
     mounted() {
@@ -36,6 +50,19 @@
 <template>
   <header class="d-flex justify-content-between align-items-center">
     <h1 class="myTitle">Foto Album</h1>
+    <div class="searchBar">
+      <div class="input-group">
+        <form @submit.prevent="fetchFilteredPhotos" class="d-flex gap-2">
+          <input
+            type="text"
+            class="form-control"
+            placeholder="Search a Photo..."
+            v-model.trim="searchedWord"
+          />
+          <button class="btn btn-danger" type="submit">Find</button>
+        </form>
+      </div>
+    </div>
     <router-link
       class="btn btn-success"
       :to="{
@@ -47,7 +74,7 @@
   </header>
   <div class="homePage">
     <div class="row">
-      <div class="col" v-for="photo in photos" :key="photo.id">
+      <div class="col" v-for="photo in filteredPhotos" :key="photo.id">
         <PhotoCard :photo="photo" />
       </div>
     </div>
