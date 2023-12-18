@@ -45,7 +45,7 @@
             <router-link :to="{ name: 'HomePage' }">Photos</router-link>
           </li>
           <li>
-            <router-link :to="{ name: 'HomePage' }">Categories</router-link>
+            <router-link :to="{ name: 'CategoryPage' }">Categories</router-link>
           </li>
         </ul>
       </div>
