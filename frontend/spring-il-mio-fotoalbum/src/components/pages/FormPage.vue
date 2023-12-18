@@ -15,6 +15,7 @@
         categories: [],
         mode: "",
         photoBackup: {},
+        errors: [],
       };
     },
     components: {},
@@ -28,6 +29,11 @@
       setMode() {
         this.mode = this.$route.params.mode;
       },
+      getFieldErrors(fieldName) {
+        return this.errors
+          .filter((error) => error.field === fieldName)
+          .map((error) => error.message);
+      },
       async fetchCategories() {
         const endpoint = `http://127.0.0.1:8080/categories/api`;
         try {
@@ -38,32 +44,63 @@
         }
       },
       async savePhoto() {
-        let endpoint = "http://127.0.0.1:8080/photos/api";
-        if (this.mode == "edit") {
-          endpoint = `http://127.0.0.1:8080/photos/api/${this.$route.params.id}`;
-        }
+        let endpoint;
+        let data;
+
+        this.errors = [];
 
         const selectedCategoriesIds = Object.keys(this.photo.categories)
           .filter((key) => this.photo.categories[key])
           .map((key) => parseInt(key, 10));
 
-        const data = {
-          title: this.photo.title,
-          description: this.photo.description,
-          url: this.photo.url,
-          visible: this.photo.visible,
-          categoryIds: selectedCategoriesIds,
+        const statusCode = {
+          validateStatus: function (status) {
+            return status < 500;
+          },
         };
+
+        if (this.mode == "edit") {
+          console.log(this.$route.params.id);
+          endpoint = `http://127.0.0.1:8080/photos/api/${this.$route.params.id}`;
+          data = {
+            id: parseInt(this.$route.params.id),
+            title: this.photo.title,
+            description: this.photo.description,
+            url: this.photo.url,
+            visible: this.photo.visible,
+            categoryIds: selectedCategoriesIds,
+          };
+        } else if (this.mode == "create") {
+          endpoint = "http://127.0.0.1:8080/photos/api";
+          data = {
+            title: this.photo.title,
+            description: this.photo.description,
+            url: this.photo.url,
+            visible: this.photo.visible,
+            categoryIds: selectedCategoriesIds,
+          };
+        }
+
+        console.log("data before executing the axios call:\n", data);
 
         try {
           let res;
           if (this.mode == "edit") {
-            res = await axios.put(endpoint, data);
+            res = await axios.put(endpoint, data, statusCode);
           } else if (this.mode == "create") {
-            res = await axios.post(endpoint, data);
+            res = await axios.post(endpoint, data, statusCode);
           }
-          const photo = res.data;
-          this.$router.push({ name: "DetailPage", params: { id: photo.id } });
+
+          if (res.status === 400) {
+            this.errors = res.data.map((error) => ({
+              field: error.field,
+              message: error.message,
+            }));
+            console.log("Field Errors: ", this.errors);
+          } else {
+            const photo = res.data;
+            this.$router.push({ name: "DetailPage", params: { id: photo.id } });
+          }
         } catch (err) {
           console.error("Catch Error: ", err);
         }
@@ -110,31 +147,67 @@
       <div class="title mb-3">
         <label for="title" class="form-label">Title</label>
         <input
+          :class="{ 'is-invalid': getFieldErrors('title').length > 0 }"
           type="text"
           class="form-control"
           id="title"
           placeholder="Photo title..."
           v-model.trim="photo.title"
         />
+        <div class="titleError">
+          <ul>
+            <li
+              class="errorMsg"
+              v-for="error in getFieldErrors('title')"
+              :key="error"
+            >
+              {{ error }}
+            </li>
+          </ul>
+        </div>
       </div>
       <div class="description mb-3">
         <label for="description" class="form-label">Description</label>
         <textarea
+          :class="{ 'is-invalid': getFieldErrors('description').length > 0 }"
           class="form-control"
           id="description"
           rows="3"
           v-model.trim="photo.description"
         ></textarea>
+        <div class="descriptionError">
+          <ul>
+            <li
+              class="errorMsg"
+              v-for="error in getFieldErrors('description')"
+              :key="error"
+            >
+              {{ error }}
+            </li>
+          </ul>
+        </div>
       </div>
       <div class="url mb-3">
         <label for="url" class="form-label">Image url</label>
         <input
+          :class="{ 'is-invalid': getFieldErrors('url').length > 0 }"
           type="text"
           class="form-control"
           id="url"
           placeholder="Image url..."
           v-model.trim="photo.url"
         />
+        <div class="urlError">
+          <ul>
+            <li
+              class="errorMsg"
+              v-for="error in getFieldErrors('url')"
+              :key="error"
+            >
+              {{ error }}
+            </li>
+          </ul>
+        </div>
       </div>
       <div class="visible form-check">
         <input
@@ -146,10 +219,14 @@
         />
         <label class="form-check-label" for="visible"> Published </label>
       </div>
-      <div class="categories">
-        <div class="category" v-for="category in categories" :key="category.id">
+      <div class="categories d-flex gap-3 py-2">
+        <div
+          class="category d-flex gap-1"
+          v-for="category in categories"
+          :key="category.id"
+        >
           <input
-            class="form-check form-check-inline"
+            class="form-check"
             type="checkbox"
             :id="category.label"
             v-model.trim="photo.categories[category.id]"
@@ -163,7 +240,12 @@
         <router-link class="btn btn-primary" :to="{ name: 'HomePage' }"
           >Back</router-link
         >
-        <button type="submit" class="btn btn-success">Create</button>
+        <button v-if="mode == 'create'" type="submit" class="btn btn-success">
+          Create
+        </button>
+        <button v-if="mode == 'edit'" type="submit" class="btn btn-warning">
+          Edit
+        </button>
       </div>
     </form>
   </div>
@@ -172,5 +254,12 @@
 <style lang="scss" scoped>
   .storePhoto {
     flex-basis: 50%;
+  }
+
+  .errorMsg {
+    font-size: 1rem;
+    font-weight: 500;
+    padding-left: 10px;
+    color: #dc3545;
   }
 </style>

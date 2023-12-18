@@ -6,13 +6,14 @@ import java.util.stream.Collectors;
 import org.java.spring.springilmiofotoalbum.db.dto.Photo_DTO;
 import org.java.spring.springilmiofotoalbum.db.pojo.Category;
 import org.java.spring.springilmiofotoalbum.db.pojo.Photo;
+import org.java.spring.springilmiofotoalbum.db.pojo.ValidationError;
 import org.java.spring.springilmiofotoalbum.db.serv.CategoryService;
 import org.java.spring.springilmiofotoalbum.db.serv.PhotoService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -55,10 +56,11 @@ public class PhotoRestController {
     public ResponseEntity<?> create(@Valid @RequestBody Photo_DTO photo_DTO, BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
-            List<String> errors = bindingResult.getAllErrors().stream()
-                    .map(DefaultMessageSourceResolvable::getDefaultMessage)
+            List<FieldError> fieldErrors = bindingResult.getFieldErrors();
+            List<ValidationError> errors = fieldErrors.stream()
+                    .map(fieldError -> new ValidationError(fieldError.getField(), fieldError.getDefaultMessage()))
                     .collect(Collectors.toList());
-
+            System.out.println("ERRORSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS:\n" + errors);
             return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
         }
 
@@ -93,11 +95,14 @@ public class PhotoRestController {
             @PathVariable int id,
             BindingResult bindingResult) {
 
-        if (bindingResult.hasErrors()) {
-            List<String> errors = bindingResult.getAllErrors().stream()
-                    .map(DefaultMessageSourceResolvable::getDefaultMessage)
-                    .collect(Collectors.toList());
+        System.out.println("Binding Result has errors: " + bindingResult.hasErrors());
 
+        if (bindingResult.hasErrors()) {
+            List<FieldError> fieldErrors = bindingResult.getFieldErrors();
+            List<ValidationError> errors = fieldErrors.stream()
+                    .map(fieldError -> new ValidationError(fieldError.getField(), fieldError.getDefaultMessage()))
+                    .collect(Collectors.toList());
+            System.out.println("ERRORSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS:\n" + errors);
             return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
         }
 
