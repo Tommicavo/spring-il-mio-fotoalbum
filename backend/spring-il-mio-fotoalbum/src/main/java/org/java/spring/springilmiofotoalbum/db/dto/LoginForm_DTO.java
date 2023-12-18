@@ -1,14 +1,19 @@
-package org.java.spring.springilmiofotoalbum.auth.db.dto;
+package org.java.spring.springilmiofotoalbum.db.dto;
 
-public class LoginForm {
+import jakarta.validation.constraints.NotBlank;
 
+public class LoginForm_DTO {
+
+    @NotBlank(message = "Field 'username' must not be empty")
     private String username;
+
+    @NotBlank(message = "Field 'password' must not be empty")
     private String password;
 
-    public LoginForm() {
+    public LoginForm_DTO() {
     }
 
-    public LoginForm(String username, String password) {
+    public LoginForm_DTO(String username, String password) {
         setUsername(username);
         setPassword(password);
     }

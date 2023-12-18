@@ -93,7 +93,7 @@
             res = await axios.post(endpoint, data, statusCode);
           }
 
-          if (res.status === 400) {
+          if (res.status != 200) {
             this.errors = res.data.map((error) => ({
               field: error.field,
               message: error.message,
