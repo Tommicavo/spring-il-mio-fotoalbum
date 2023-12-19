@@ -2,6 +2,7 @@ package org.java.spring.springilmiofotoalbum.restController;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.java.spring.springilmiofotoalbum.auth.db.pojo.User;
@@ -21,6 +22,7 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -45,7 +47,7 @@ public class PhotoRestController {
 
     @GetMapping
     public ResponseEntity<List<Photo>> index() {
-        List<Photo> photos = photoService.findAll();
+        List<Photo> photos = photoService.findAllVisible();
         if (photos == null)
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(photos, HttpStatus.OK);
@@ -57,6 +59,15 @@ public class PhotoRestController {
         if (photo == null)
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(photo, HttpStatus.OK);
+    }
+
+    @PostMapping("/myPhoto")
+    public ResponseEntity<?> myIndex(@RequestBody int user_id) {
+        List<Photo> photos = photoService.findAllMine(user_id);
+        if (photos == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(photos, HttpStatus.OK);
     }
 
     @PostMapping
@@ -137,6 +148,22 @@ public class PhotoRestController {
         }
 
         photo.setCategories(categories);
+        photoService.save(photo);
+
+        return new ResponseEntity<>(photo, HttpStatus.OK);
+    }
+
+    @PatchMapping("{id}/visibility")
+    public ResponseEntity<?> updateVisibility(@PathVariable int id, @RequestBody Map<String, Boolean> visibilityMap) {
+        Boolean visible = visibilityMap.get("visible");
+
+        Photo photo = photoService.findById(id);
+
+        if (photo == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        photo.setVisible(visible);
         photoService.save(photo);
 
         return new ResponseEntity<>(photo, HttpStatus.OK);

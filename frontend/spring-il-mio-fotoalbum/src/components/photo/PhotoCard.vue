@@ -37,7 +37,7 @@
           </div>
           <div class="user">
             <span class="fw-bold">Author: </span>
-            <span>username</span>
+            <span>{{ photo.user.username }}</span>
           </div>
         </div>
       </div>

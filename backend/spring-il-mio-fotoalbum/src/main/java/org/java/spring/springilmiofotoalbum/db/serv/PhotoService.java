@@ -1,7 +1,6 @@
 package org.java.spring.springilmiofotoalbum.db.serv;
 
 import java.util.List;
-
 import org.java.spring.springilmiofotoalbum.db.pojo.Photo;
 import org.java.spring.springilmiofotoalbum.db.repo.PhotoRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +14,14 @@ public class PhotoService {
 
     public List<Photo> findAll() {
         return photoRepo.findAll();
+    }
+
+    public List<Photo> findAllVisible() {
+        return photoRepo.findAllAndByVisibleTrue();
+    }
+
+    public List<Photo> findAllMine(int user_id) {
+        return photoRepo.findAllByUserId(user_id);
     }
 
     public Photo findById(int id) {

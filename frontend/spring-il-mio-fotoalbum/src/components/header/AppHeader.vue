@@ -43,7 +43,10 @@
       <div class="navbarLeft">
         <ul class="d-flex gap-3">
           <li>
-            <router-link :to="{ name: 'HomePage' }">Photos</router-link>
+            <router-link :to="{ name: 'HomePage' }">All Photos</router-link>
+          </li>
+          <li v-if="isLogged">
+            <router-link :to="{ name: 'UserPage' }">My Photos</router-link>
           </li>
           <li>
             <router-link :to="{ name: 'CategoryPage' }">Categories</router-link>

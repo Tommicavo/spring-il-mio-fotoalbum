@@ -36,6 +36,18 @@
           console.error("Catch Error: ", err);
         }
       },
+      async changeVisibility(id) {
+        const endpoint = `http://127.0.0.1:8080/photos/api/${id}/visibility`;
+        const data = { visible: !this.photo.visible };
+
+        try {
+          const res = await axios.patch(endpoint, data);
+          this.photo = res.data;
+          this.$router.push({ name: "HomePage" });
+        } catch (err) {
+          console.error("Catch Error: ", err);
+        }
+      },
     },
     mounted() {
       this.fetchPhoto();
@@ -45,7 +57,11 @@
 
 <template>
   <div class="detailPage d-flex justify-content-center align-items-center">
-    <DetailedPhotoCard :photo="photo" @delete="deletePhoto" />
+    <DetailedPhotoCard
+      :photo="photo"
+      @delete="deletePhoto"
+      @visibleBtn="changeVisibility"
+    />
   </div>
 </template>
 

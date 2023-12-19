@@ -18,6 +18,12 @@
           return store.user.username == this.photo.user.username;
         }
       },
+      isVisible() {
+        if (this.photo.visible) {
+          return "Draft";
+        }
+        return "Publish";
+      },
     },
     methods: {
       getCategories(photo) {
@@ -36,7 +42,7 @@
         }
       },
     },
-    emits: ["delete"],
+    emits: ["delete", "visibleBtn"],
     watch: {
       photo: {
         immediate: false,
@@ -58,10 +64,10 @@
           >Back</router-link
         >
       </div>
-      <div class="headerRight d-flex gap-3">
+      <!-- <div class="headerRight d-flex gap-3">
         <a class="btn btn-info" href="#">Prev</a>
         <a class="btn btn-info" href="#">Next</a>
-      </div>
+      </div> -->
     </header>
     <section>
       <div class="imageContainer">
@@ -76,7 +82,13 @@
           }"
           >Edit</router-link
         >
-        <a class="btn btn-info" href="#">Publish</a>
+        <button
+          type="button"
+          class="btn btn-info"
+          @click="$emit('visibleBtn', photo.id)"
+        >
+          {{ isVisible }}
+        </button>
         <button
           class="btn btn-danger"
           type="button"
