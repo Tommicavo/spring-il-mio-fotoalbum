@@ -1,5 +1,5 @@
 <script>
-  import { store } from "../../assets/data/store";
+  import { store } from "@/assets/data/store";
 
   export default {
     name: "AppHeader",
@@ -31,6 +31,7 @@
       logout() {
         store.isLoggedIn = false;
         store.user = {};
+        this.$router.push({ name: "HomePage" });
       },
     },
   };

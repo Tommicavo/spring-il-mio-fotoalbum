@@ -17,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -61,12 +62,14 @@ public class PhotoRestController {
     @PostMapping
     public ResponseEntity<?> create(@Valid @RequestBody Photo_DTO photo_DTO, BindingResult bindingResult) {
 
+        System.out.println(photo_DTO);
+
         if (bindingResult.hasErrors()) {
             List<FieldError> fieldErrors = bindingResult.getFieldErrors();
             List<ValidationError> errors = fieldErrors.stream()
                     .map(fieldError -> new ValidationError(fieldError.getField(), fieldError.getDefaultMessage()))
                     .collect(Collectors.toList());
-            System.out.println("ERRORSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS:\n" + errors);
+            System.out.println("|-----CREATE PHOTO ERRORS-----|\n" + errors);
             return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
         }
 
@@ -105,12 +108,10 @@ public class PhotoRestController {
             @PathVariable int id,
             BindingResult bindingResult) {
 
+        System.out.println(photo_DTO);
+
         if (bindingResult.hasErrors()) {
-            List<FieldError> fieldErrors = bindingResult.getFieldErrors();
-            List<ValidationError> errors = fieldErrors.stream()
-                    .map(fieldError -> new ValidationError(fieldError.getField(), fieldError.getDefaultMessage()))
-                    .collect(Collectors.toList());
-            System.out.println("ERRORSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS:\n" + errors);
+            List<ObjectError> errors = bindingResult.getAllErrors();
             return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
         }
 

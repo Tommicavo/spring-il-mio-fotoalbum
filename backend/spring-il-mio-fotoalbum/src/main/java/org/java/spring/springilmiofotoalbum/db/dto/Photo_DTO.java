@@ -2,14 +2,9 @@ package org.java.spring.springilmiofotoalbum.db.dto;
 
 import java.util.List;
 import org.hibernate.validator.constraints.Length;
-import org.java.spring.springilmiofotoalbum.auth.db.pojo.User;
-
-import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotBlank;
 
 public class Photo_DTO {
-
-    private int id;
 
     @NotBlank(message = "Field 'Title' must not be empty")
     @Length(max = 64, message = "Field 'Title' must not be longer than 64 characters")
@@ -25,14 +20,6 @@ public class Photo_DTO {
     private List<Integer> categoryIds;
 
     private int user_id;
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public String getTitle() {
         return title;
@@ -82,10 +69,14 @@ public class Photo_DTO {
         this.user_id = user_id;
     }
 
-    @AssertTrue(message = "Custom validation message")
-    public boolean isCustomValidationTrue() {
-        // Add custom validation logic if needed
-        System.out.println("Custom validation called");
-        return true;
+    @Override
+    public String toString() {
+        return "Photo_DTO:\n" +
+                "title: " + getTitle() + '\n' +
+                "description: " + getDescription() + '\n' +
+                "url: " + getUrl() + '\n' +
+                "visible: " + isVisible() + '\n' +
+                "categoryIds: " + getCategoryIds() + '\n' +
+                "userId: " + getUser_id();
     }
 }

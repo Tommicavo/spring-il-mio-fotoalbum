@@ -6,6 +6,7 @@
     name: "FormPage",
     data() {
       return {
+        store,
         photo: {
           title: "",
           description: "",
@@ -61,15 +62,14 @@
         };
 
         if (this.mode == "edit") {
-          console.log(this.$route.params.id);
           endpoint = `http://127.0.0.1:8080/photos/api/${this.$route.params.id}`;
           data = {
-            id: parseInt(this.$route.params.id),
             title: this.photo.title,
             description: this.photo.description,
             url: this.photo.url,
             visible: this.photo.visible,
             categoryIds: selectedCategoriesIds,
+            user_id: this.photoBackup.user_id,
           };
         } else if (this.mode == "create") {
           endpoint = "http://127.0.0.1:8080/photos/api";
@@ -83,25 +83,38 @@
           };
         }
 
-        console.log("data before executing the axios call:\n", data);
-
         try {
           let res;
           if (this.mode == "edit") {
             res = await axios.put(endpoint, data, statusCode);
+            if (res.status != 200) {
+              this.errors = res.data.errors.map((error) => ({
+                field: error.field,
+                message: error.defaultMessage,
+              }));
+              console.log("Field Errors: ", this.errors);
+            } else {
+              const photo = res.data;
+              this.$router.push({
+                name: "DetailPage",
+                params: { id: photo.id },
+              });
+            }
           } else if (this.mode == "create") {
             res = await axios.post(endpoint, data, statusCode);
-          }
-
-          if (res.status != 200) {
-            this.errors = res.data.map((error) => ({
-              field: error.field,
-              message: error.message,
-            }));
-            console.log("Field Errors: ", this.errors);
-          } else {
-            const photo = res.data;
-            this.$router.push({ name: "DetailPage", params: { id: photo.id } });
+            if (res.status != 200) {
+              this.errors = res.data.map((error) => ({
+                field: error.field,
+                message: error.message,
+              }));
+              console.log("Field Errors: ", this.errors);
+            } else {
+              const photo = res.data;
+              this.$router.push({
+                name: "DetailPage",
+                params: { id: photo.id },
+              });
+            }
           }
         } catch (err) {
           console.error("Catch Error: ", err);
@@ -242,11 +255,11 @@
         <router-link class="btn btn-primary" :to="{ name: 'HomePage' }"
           >Back</router-link
         >
-        <button v-if="mode == 'create'" type="submit" class="btn btn-success">
-          Create
-        </button>
         <button v-if="mode == 'edit'" type="submit" class="btn btn-warning">
           Edit
+        </button>
+        <button v-if="mode == 'create'" type="submit" class="btn btn-success">
+          Create
         </button>
       </div>
     </form>
