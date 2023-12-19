@@ -8,8 +8,12 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
+import jakarta.validation.constraints.NotBlank;
+
 import java.util.Collection;
 import java.util.List;
+
+import org.hibernate.validator.constraints.UniqueElements;
 import org.java.spring.springilmiofotoalbum.db.pojo.Photo;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -24,10 +28,12 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(nullable = false)
+    @Column(unique = true, nullable = false)
+    @NotBlank(message = "Field 'username' must not be empty")
     private String username;
 
     @Column(nullable = false)
+    @NotBlank(message = "Field 'password' must not be empty")
     private String password;
 
     @ManyToMany(fetch = FetchType.EAGER)

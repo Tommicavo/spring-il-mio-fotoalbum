@@ -24,6 +24,12 @@
         }
         return "Publish";
       },
+      isAdmin() {
+        if (store.isLoggedIn) {
+          return store.user.roles[0].name == "ADMIN";
+        }
+        return false;
+      },
     },
     methods: {
       getCategories(photo) {
@@ -73,8 +79,9 @@
       <div class="imageContainer">
         <img class="image" :src="photo.url" :alt="photo.title" />
       </div>
-      <div v-if="isMyPhoto" class="userControl d-flex gap-3 p-1">
+      <div class="userControl d-flex gap-3 p-1">
         <router-link
+          v-if="isMyPhoto"
           class="btn btn-warning"
           :to="{
             name: 'FormPage',
@@ -83,6 +90,7 @@
           >Edit</router-link
         >
         <button
+          v-if="isMyPhoto || isAdmin"
           type="button"
           class="btn btn-info"
           @click="$emit('visibleBtn', photo.id)"
@@ -90,6 +98,7 @@
           {{ isVisible }}
         </button>
         <button
+          v-if="isMyPhoto"
           class="btn btn-danger"
           type="button"
           @click="$emit('delete', photo.id)"

@@ -18,13 +18,24 @@
       PhotoCard,
     },
     props: {},
-    computed: {},
+    computed: {
+      isAdmin() {
+        if (store.isLoggedIn) {
+          return store.user.roles[0].name == "ADMIN";
+        }
+        return false;
+      },
+    },
     methods: {
       async fetchPhotos() {
-        const endpoint = "http://127.0.0.1:8080/photos/api";
+        let endpoint = "http://127.0.0.1:8080/photos/api";
+        if (this.isAdmin) {
+          endpoint = "http://127.0.0.1:8080/photos/api/admin";
+        }
+
         try {
           const res = await axios.get(endpoint);
-          console.log("Photos: ", res.data);
+          // console.log("Photos: ", res.data);
           this.photos = res.data;
           this.filteredPhotos = res.data;
         } catch (err) {
@@ -45,13 +56,17 @@
     },
     mounted() {
       this.fetchPhotos();
+      console.log("STORE: ", store);
     },
   };
 </script>
 
 <template>
   <header class="d-flex justify-content-between align-items-center">
-    <h1 class="myTitle">Foto Album</h1>
+    <div class="title">
+      <h1 class="myTitle">Foto Album</h1>
+      <h6>Visible Photos of all users</h6>
+    </div>
     <div class="searchBar">
       <div class="input-group">
         <form @submit.prevent="fetchFilteredPhotos" class="d-flex gap-2">

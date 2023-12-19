@@ -53,6 +53,15 @@ public class PhotoRestController {
         return new ResponseEntity<>(photos, HttpStatus.OK);
     }
 
+    @GetMapping("/admin")
+    public ResponseEntity<?> superIndex() {
+        List<Photo> photos = photoService.findAll();
+        if (photos == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(photos, HttpStatus.OK);
+    }
+
     @GetMapping("{id}")
     public ResponseEntity<Photo> show(@PathVariable int id) {
         Photo photo = photoService.findById(id);

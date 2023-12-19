@@ -1,5 +1,6 @@
 package org.java.spring.springilmiofotoalbum.restController;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.java.spring.springilmiofotoalbum.auth.db.pojo.User;
@@ -47,10 +48,18 @@ public class UserRestController {
 
         User user = userService.findByUsername(username);
 
-        if (user != null && passwordEncoder.matches(password, user.getPassword())) {
-            return new ResponseEntity<>(user, HttpStatus.OK);
+        if (user == null) {
+            List<ValidationError> errors = new ArrayList<>();
+            errors.add(new ValidationError("username", "The '" + loginForm.getUsername() + "' username doesn't exist"));
+            return new ResponseEntity<>(errors, HttpStatus.NOT_FOUND);
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            if (passwordEncoder.matches(password, user.getPassword())) {
+                return new ResponseEntity<>(user, HttpStatus.OK);
+            } else {
+                List<ValidationError> errors = new ArrayList<>();
+                errors.add(new ValidationError("password", "Incorrect password"));
+                return new ResponseEntity<>(errors, HttpStatus.UNAUTHORIZED);
+            }
         }
     }
 }

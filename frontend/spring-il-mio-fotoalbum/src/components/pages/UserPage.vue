@@ -57,7 +57,10 @@
 
 <template>
   <header class="d-flex justify-content-between align-items-center">
-    <h1 class="myTitle">Foto Album</h1>
+    <div class="title">
+      <h1 class="myTitle">Foto Album</h1>
+      <h6>All Photos of current user</h6>
+    </div>
     <div class="searchBar">
       <div class="input-group">
         <form @submit.prevent="fetchFilteredPhotos" class="d-flex gap-2">

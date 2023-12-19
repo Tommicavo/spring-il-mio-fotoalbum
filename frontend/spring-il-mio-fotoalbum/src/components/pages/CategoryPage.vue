@@ -1,17 +1,27 @@
 <script>
   import axios from "axios";
 
+  import { store } from "@/assets/data/store.js";
+
   export default {
     name: "CategoryPage",
     data() {
       return {
+        store,
         categories: [],
         newCat: "",
       };
     },
     components: {},
     props: {},
-    computed: {},
+    computed: {
+      isAdmin() {
+        if (store.isLoggedIn) {
+          return store.user.roles[0].name == "ADMIN";
+        }
+        return false;
+      },
+    },
     methods: {
       async fetchCategories() {
         const endpoint = "http://127.0.0.1:8080/categories/api";
@@ -50,6 +60,8 @@
 </script>
 
 <template>
+  <h1>Categories</h1>
+  <h6 class="mb-3">Only admin can create or delete categories</h6>
   <table class="table table-dark table-striped">
     <thead>
       <tr>
@@ -63,17 +75,19 @@
         <td>{{ category.id }}</td>
         <td>{{ category.label }}</td>
         <td>
-          <button
-            type="button"
-            class="btn btn-danger"
-            @click="deleteCategory(category.id)"
-          >
-            Remove
-          </button>
+          <div v-if="isAdmin">
+            <button
+              type="button"
+              class="btn btn-danger"
+              @click="deleteCategory(category.id)"
+            >
+              Remove
+            </button>
+          </div>
         </td>
       </tr>
-      <tr>
-        <td class="text-center" colspan="3">
+      <tr v-if="isAdmin">
+        <td class="text-center" :colspan="isAdmin ? '3' : '2'">
           <form method="POST" class="catForm" @submit.prevent="storeCategory">
             <div class="input-group">
               <input
